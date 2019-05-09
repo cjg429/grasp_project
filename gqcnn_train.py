@@ -11,8 +11,13 @@ from gqcnn_network import GQCNN, reset_graph
 
 class TensorDataset(object):
     def __init__(self, filename):
+<<<<<<< HEAD
         self._filename = filename
         #self._filename = "/home/cjg429/Desktop/gqcnn-master/data/training/data/training/mini-dexnet_fc_pj_10_02_18/grasps"
+=======
+        #self._filename = filename
+        self._filename = "/home/cjg429/Desktop/gqcnn-master/data/training/data/training/mini-dexnet_fc_pj_10_02_18/grasps"
+>>>>>>> d50452e82653da6fc8a059471974df4f57f72e37
         #self._config = json.load(open(config_filename, 'r'))
 
         self._im_field_name = "tf_depth_ims"
@@ -46,7 +51,11 @@ class TensorDataset(object):
                     self._file_num_to_indices[cur_file_num] = np.arange(self._num_datapoints_last_file) + start_datapoint_index
             self._index_to_file_num[ind] = cur_file_num
         
+<<<<<<< HEAD
         self._split_name = "image_wise"
+=======
+        self._split_name = "image_wise_1"
+>>>>>>> d50452e82653da6fc8a059471974df4f57f72e37
         self.split()
         self.compute_data_metrics()
             
@@ -467,53 +476,86 @@ def error_rate_in_batches(gqcnn, dataset, num_files_eval=None, validation_set=Tr
             true_count += 1
         elif all_labels[i] == 0 and all_predictions[i] < 0.5:
             true_count += 1
+<<<<<<< HEAD
+=======
+    
+>>>>>>> d50452e82653da6fc8a059471974df4f57f72e37
     print(len([i for i, x in enumerate(all_predictions) if x > 0.5]))
     print(len([i for i, x in enumerate(all_labels) if x == 1]))
     print(len([i for i, x in enumerate(all_predictions) if x < 0.5]))
     print(len([i for i, x in enumerate(all_labels) if x == 0]))
+<<<<<<< HEAD
     return true_count, len(all_predictions)
+=======
+    return true_count / len(all_predictions)
+>>>>>>> d50452e82653da6fc8a059471974df4f57f72e37
     
 
 def main():
     reset_graph()
+<<<<<<< HEAD
     DATA_DIR = "/home/scarab6/Desktop/gqcnn/data/training/example_pj"
     dataset = TensorDataset(DATA_DIR)
     
+=======
+    DATA_DIR = "/home/cjg429/Desktop/gqcnn-master/data/training/example_pj/tensors"
+    dataset = TensorDataset(DATA_DIR)   
+    
+    total_length = 17241
+>>>>>>> d50452e82653da6fc8a059471974df4f57f72e37
     seed = 0
     np.random.seed(seed)
     random.seed(seed)
     
+<<<<<<< HEAD
     base_lr = learning_rate
     decay_step_multiplier = 0.33
+=======
+    base_lr = 1e-3
+    decay_step_multiplier = 0.5
+>>>>>>> d50452e82653da6fc8a059471974df4f57f72e37
     decay_rate = 0.95
     num_train = 0
     for train_indices in dataset._train_index_map.values():
         num_train += train_indices.shape[0]
     decay_step = decay_step_multiplier * num_train
+<<<<<<< HEAD
     #min_learning_rate = 1e-6
     
+=======
+>>>>>>> d50452e82653da6fc8a059471974df4f57f72e37
     train_batch_size = 64
     
     train_step = 0
     decayed_learning_rate = base_lr
     
+<<<<<<< HEAD
     save_frequency = 100
     eval_frequency = 100
     
     print("train", "step", "loss", "lr")
     for epoch in range(NUM_EPOCH):
         num_batches = int(num_train / batch_size)
+=======
+    print("train", "step", "loss", "lr")
+    for epoch in range(NUM_EPOCH):
+        num_batches = int(total_length / batch_size)
+>>>>>>> d50452e82653da6fc8a059471974df4f57f72e37
         for idx in range(num_batches):
             images, poses, labels = dataset.sample()
             
             decayed_learning_rate = base_lr * pow(decay_rate, (train_step * train_batch_size / decay_step))
+<<<<<<< HEAD
             #decayed_learning_rate = max(decayed_learning_rate, min_learning_rate)
+=======
+>>>>>>> d50452e82653da6fc8a059471974df4f57f72e37
               
             feed = {gqcnn.input_im_node: images, gqcnn.input_pose_node: poses, 
                     gqcnn.input_label_node: labels, gqcnn.input_drop_rate_node: 0.0, gqcnn.learning_rate: decayed_learning_rate}
             
             (train_loss, train_step, _) = gqcnn.sess.run([gqcnn.loss, gqcnn.global_step, gqcnn.train_op], feed)
             
+<<<<<<< HEAD
             if ((train_step + 1) % eval_frequency == 0):
                 curr_epoch = epoch + (float(idx) / num_batches)
                 print("epoch", "%0.2f"%curr_epoch, "step", (train_step + 1), decayed_learning_rate, train_loss)
@@ -521,20 +563,38 @@ def main():
                 gqcnn.save_model(model_save_path)
                 print("save_model")
             if ((train_step + 1) % 500 == 0):
+=======
+            if ((train_step + 1) % 10 == 0):
+                print("step", (train_step + 1), decayed_learning_rate, train_loss)
+            if ((train_step + 1) % 5000 == 0):
+                gqcnn.save_json(model_save_path + "/" + save_name + ".json")
+                print("save_model")
+                
+>>>>>>> d50452e82653da6fc8a059471974df4f57f72e37
                 error_rate = error_rate_in_batches(gqcnn, dataset)
                 print(error_rate)
 
     # finished, final model:
+<<<<<<< HEAD
     gqcnn.save_model(model_save_path)
+=======
+    gqcnn.save_json(model_save_path + "/" + save_name + ".json")
+>>>>>>> d50452e82653da6fc8a059471974df4f57f72e37
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--batch-size', type=int, default=64)
     parser.add_argument(
+<<<<<<< HEAD
         '--epochs', type=int, default=50)  
     parser.add_argument(
         '--lr', type=float, default=1e-2) 
+=======
+        '--epochs', type=int, default=2000000)  
+    parser.add_argument(
+        '--lr', type=float, default=1e-4) 
+>>>>>>> d50452e82653da6fc8a059471974df4f57f72e37
     parser.add_argument(
         '--seed', type=int, default=1)         
     args = parser.parse_args()
@@ -542,8 +602,13 @@ if __name__ == '__main__':
     batch_size = args.batch_size
     learning_rate = args.lr
     NUM_EPOCH = args.epochs
+<<<<<<< HEAD
     save_name = "gqcnn_pretrain"
     model_save_path = "gqcnn_pretrain"
+=======
+    save_name = "gqcnn_full"
+    model_save_path = "tf_gqcnn"
+>>>>>>> d50452e82653da6fc8a059471974df4f57f72e37
     if not os.path.exists(model_save_path):
         os.makedirs(model_save_path)
     
